@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Video/Image Shoot</title>
+		<style type="text/css">
+			.float-left {
+				float: left;
+			}
+			video {
+				height: 300px;
+				width: 400px;
+				position: absolute;
+				top: 20px;
+				left: 50%;
+				margin: 0 0 0 -200px;
+			}
+			canvas {
+				position: absolute;
+				border: solid 2px;
+				top: 50%;
+				left: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<video id="video-elm" controls loop>
+			<source src="../videos/Bleach.mp4"></source>
+			Your browser does not support HTML5 video.
+		</video>
+		<button id="load-btn" class="float-left">Load</button>
+		<button id="play-btn" class="float-left">Play/Pause</button>
+		<button id = "playRate-btn" class="float-left">playBackButton++</button>
+		<button id = "subplayRate-btn" class="float-left">playBackButton--</button>
+		<canvas id="canvas-elm"></canvas>
+	</body>
+	<script src="../../dsa-js-libs/event-handlers.js"></script>
+	<script src="../js/video-manager.js"></script>
+	<script src="../js/canvas-video-player.js"></script>
+	<script src="../js/shoot.js"></script>
+	<script type="text/javascript">
+		var VideoControl,
+			CanvasVideo,
+			videoElm = document.getElementById('video-elm');
+
+		window.addEventListener('DOMContentLoaded', function(){
+			init();
+			attachEvents();
+		});
+
+		function init(){
+			VideoControl = new VideoMngr(document, videoElm) || {};
+			VideoControl.init();
+
+			CanvasVideo = new CanvasPlayer(document, document.getElementById('video-elm'), document.getElementById('canvas-elm'));
+		}
+
+		function attachEvents(){
+			if(DSA && DSA.Events){
+				DSA.Events.register(document.getElementById('load-btn'), "click",function(){
+					VideoControl.load();
+				},false);
+
+				DSA.Events.register(document.getElementById('play-btn'), "click", function(){
+					VideoControl.paused ? VideoControl.play() : VideoControl.pause();
+				}, false);
+
+				DSA.Events.register(document.getElementById('playRate-btn'), 'click', function(){
+					VideoControl.addplaybackRate();
+				}, false);
+
+				DSA.Events.register(document.getElementById('subplayRate-btn'), 'click',function(){
+					VideoControl.subplaybackRate();
+				}, false);
+			}
+		}
+
+	</script>
+</html>
