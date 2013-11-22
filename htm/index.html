@@ -108,8 +108,16 @@
 			}
 		}
 
+		var $ = function $ (id) {
+			return document.getElementById(id);
+		}
+
 		function draw(video, w, h){
 			if(video.paused || video.ended)  return false;
+			var lastBuffered = video.buffered.end(video.buffered.length-1);
+
+			if(lastBuffered <= video.currentTime) return false
+
 
 			var canvas = document.createElement('canvas'),
 				context;
@@ -120,7 +128,7 @@
 
 			context.drawImage(video, 0, 0, w, h);
 			document.getElementById('image-holder').appendChild(canvas);
-			//setTimeout(draw,100,video,w,h);				
+			setTimeout(draw,100,video,w,h);				
 		};
 
 	</script>
