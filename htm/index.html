@@ -14,122 +14,136 @@
 				height: 300px;
 				width: 400px;
 			}
-			.btn-holder {
-				width: 150px;
-				height: 200px;
+			body {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
 			}
-			.btn-holder button {
-				min-width: 140px;
+			.video-holder {
+				width: 100%;
+				height: 50%;
+				text-align: center;
+				background-color: black;
 			}
-			canvas {
-				border: 2px solid;
-				margin: 2px;
+			#video-elm {
+				margin: 10px;
+				border: 1px solid white;
 			}
-			#canvas-elm, #image-holder {
-				margin-left: 150px;
+			#image-holder {
+				width: 100%;
+				height: 50%;
+				overflow: auto;
+			}
+			#image-holder canvas {
+				border: 1px solid;
+				padding: 2px;
 			}
 		</style>
 	</head>
 	<body>
-		<div class="btn-holder float-left">
+		<div class="video-holder">
+			<video id="video-elm" controls>
+				<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>
+				Your browser does not support HTML5 video.
+			</video>
+		</div>
+		<div id ="image-holder"></div>
+		<!--<div class="btn-holder float-left">
 			<button id="load-btn">Load</button>
 			<button id="play-btn">Play/Pause</button>
 			<button id = "playRate-btn">playBackButton++</button>
 			<button id = "subplayRate-btn">playBackButton--</button>
-		</div>
-		<video id="video-elm" controls>
-			<source src="../videos/Bleach.mp4"></source>
-			<!--<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>-->
-			Your browser does not support HTML5 video.
-		</video>
-		<video id="video-elm-fast" style="left: 60%" controls>
+		</div>-->
+		<!--<video id="video-elm-fast" style="left: 60%" controls>-->
 			<!--<source src="../videos/Bleach.mp4"></source>-->
-			<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>
+			<!--<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>
 			Your browser does not support HTML5 video.
-		</video>
-		<canvas id="canvas-elm"></canvas>
-		<canvas id="canvas-fast" style="height: 300px; width: 400px;"></canvas>
-		<div id ="image-holder"></div>
+		</video>-->
+		<!--<canvas id="canvas-elm"></canvas>
+		<canvas id="canvas-fast" style="height: 300px; width: 400px;"></canvas>-->
 	</body>
+	<script src="../js-lib/jquery.min.js"></script>
 	<script src="../../dsa-js-libs/event-handlers.js"></script>
 	<script src="../js/video-manager.js"></script>
-	<script src="../js/canvas-video-player.js"></script>
 	<script src="../js/shoot.js"></script>
+	<script src="../js/canvas-video-player.js"></script>
 	<script type="text/javascript">
 		var VideoControl,
 			CanvasVideo,
-			videoElm = document.getElementById('video-elm'),
+			ShootControl,
+			videoElm = $("#video-elm"),
 			videoTime = 0;
 
-		window.addEventListener('DOMContentLoaded', function(){
+		$(document).ready(function(){
 			init();
 			attachEvents();
 		});
 
 		function init(){
-			VideoControl = new VideoMngr(document, videoElm) || {};
+			VideoControl = new VideoMngr(document, videoElm.get(0)) || {};
 			VideoControl.init();
 
-			CanvasVideo = new CanvasPlayer(document, document.getElementById('video-elm'), document.getElementById('canvas-elm'));
+			ShootControl = new Shoot(document, videoElm.get(0), $('#image-holder').get(0), [{width: 50, height: 50}]);
 
-			CanvasVideoFast = new CanvasPlayer(document, document.getElementById('video-elm-fast'),document.getElementById('canvas-fast'));
+			//CanvasVideo = new CanvasPlayer(document,videoElm.get(0), $('#canvas-elm').get(0));
+			//CanvasVideoFast = new CanvasPlayer(document, $('#video-elm-fast').get(0),$('#canvas-fast').get(0));
 		}
 
 		function attachEvents(){
 			if(DSA && DSA.Events){
-				DSA.Events.register(document.getElementById('load-btn'), "click",function(){
+				DSA.Events.register($('#load-btn').get(0), "click",function(){
 					VideoControl.load();
 				},false);
 
-				DSA.Events.register(document.getElementById('play-btn'), "click", function(){
+				DSA.Events.register($('#play-btn').get(0), "click", function(){
 					VideoControl.paused ? VideoControl.play() : VideoControl.pause();
 				}, false);
 
-				DSA.Events.register(document.getElementById('playRate-btn'), 'click', function(){
+				DSA.Events.register($('#playRate-btn').get(0), 'click', function(){
 					VideoControl.addplaybackRate();
 				}, false);
 
-				DSA.Events.register(document.getElementById('subplayRate-btn'), 'click',function(){
+				DSA.Events.register($('#subplayRate-btn').get(0), 'click',function(){
 					VideoControl.subplaybackRate();
 				}, false);
 
-				DSA.Events.register(document.getElementById('video-elm-fast'), 'timeupdate', function(e){
-					var canvas = document.getElementById('canvas-fast'),
-						context = canvas.getContext('2d');
-
-					e.target.playbackRate = 2;
-
-					draw(document.getElementById('video-elm-fast'), 50, 50);
-					
-					//document.getElementById('image-holder').appendChild(img);
-					
+				/*DSA.Events.register($('#video-elm-fast').get(0), 'loadstart', function(e){
+					e.target.playbackRate = 1;
+					e.target.play();					
 				}, false);
+
+				DSA.Events.register($('#video-elm-fast').get(0), 'timeupdate', function(e){
+
+					draw($('#video-elm-fast').get(0), 50, 50);
+					
+				}, false);*/
 
 			}
 		}
 
-		var $ = function $ (id) {
-			return document.getElementById(id);
-		}
-
-		function draw(video, w, h){
+		/*function draw(video, w, h){
 			if(video.paused || video.ended)  return false;
-			var lastBuffered = video.buffered.end(video.buffered.length-1);
 
-			if(lastBuffered <= video.currentTime) return false
+			if(videoTime == video.currentTime) return false;
+
+			var lastBuffered = video.buffered.end(video.buffered.length-1);
+			if(lastBuffered <= video.currentTime) return false;
 
 
 			var canvas = document.createElement('canvas'),
 				context;
 
+			videoTime = video.currentTime;
 			canvas.height = 50;
 			canvas.width = 50;
 			context = canvas.getContext('2d');
 
 			context.drawImage(video, 0, 0, w, h);
-			document.getElementById('image-holder').appendChild(canvas);
-			setTimeout(draw,100,video,w,h);				
-		};
+			$('#image-holder').append(canvas);
+			//setTimeout(draw,100,video,w,h);				
+		};*/
 
 	</script>
 </html>
