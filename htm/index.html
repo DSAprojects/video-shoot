@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Video/Image Shoot</title>
+		<!--<link rel="stylesheet" type="text/css" href="../js-lib/jquery.bxslider/jquery.bxslider.css">-->
 		<style type="text/css">
 			.float-left {
 				float: left;
@@ -23,7 +24,7 @@
 			}
 			.video-holder {
 				width: 100%;
-				height: 50%;
+				height: 60%;
 				text-align: center;
 				background-color: black;
 			}
@@ -33,38 +34,40 @@
 			}
 			#image-holder {
 				width: 100%;
-				height: 50%;
+				height: 40%;
 				overflow: auto;
 			}
-			#image-holder canvas {
+			#image-holder canvas , #shoot-holder canvas {
 				border: 1px solid;
 				padding: 2px;
+			}
+			#shoot-holder {
+				width: 400px;
+				height: 65px;
+				max-width: 400px;
+				max-height: 65px;
+				margin: 0 0 0 34.5%;
+				border: 1px solid white;
+			}
+			#shoot-holder canvas {
+				margin-right: 3px;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="video-holder">
-			<video id="video-elm" controls>
+			<video id="video-elm" controls preload="none">
 				<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>
 				Your browser does not support HTML5 video.
 			</video>
+			<div id="shoot-holder"></div>
 		</div>
 		<div id ="image-holder"></div>
-		<!--<div class="btn-holder float-left">
-			<button id="load-btn">Load</button>
-			<button id="play-btn">Play/Pause</button>
-			<button id = "playRate-btn">playBackButton++</button>
-			<button id = "subplayRate-btn">playBackButton--</button>
-		</div>-->
-		<!--<video id="video-elm-fast" style="left: 60%" controls>-->
-			<!--<source src="../videos/Bleach.mp4"></source>-->
-			<!--<source src="http://media.w3.org/2010/05/sintel/trailer.mp4"></source>
-			Your browser does not support HTML5 video.
-		</video>-->
-		<!--<canvas id="canvas-elm"></canvas>
-		<canvas id="canvas-fast" style="height: 300px; width: 400px;"></canvas>-->
 	</body>
 	<script src="../js-lib/jquery.min.js"></script>
+	<!--<script src="../js-lib/jquery.bxslider/plugins/jquery.easing.1.3.js"></script>
+	<script src="../js-lib/jquery.bxslider/plugins/jquery.fitvids.js"></script>
+	<script src="../js-lib/jquery.bxslider/jquery.bxslider.min.js"></script>-->
 	<script src="../../dsa-js-libs/event-handlers.js"></script>
 	<script src="../js/video-manager.js"></script>
 	<script src="../js/shoot.js"></script>
@@ -78,72 +81,15 @@
 
 		$(document).ready(function(){
 			init();
-			attachEvents();
 		});
 
 		function init(){
 			VideoControl = new VideoMngr(document, videoElm.get(0)) || {};
 			VideoControl.init();
 
-			ShootControl = new Shoot(document, videoElm.get(0), $('#image-holder').get(0), [{width: 50, height: 50}]);
-
-			//CanvasVideo = new CanvasPlayer(document,videoElm.get(0), $('#canvas-elm').get(0));
-			//CanvasVideoFast = new CanvasPlayer(document, $('#video-elm-fast').get(0),$('#canvas-fast').get(0));
+			ShootControl = new Shoot(document, videoElm.get(0), $('#image-holder').get(0), $('#shoot-holder').get(0), [{width: 50, height: 50}]);
 		}
 
-		function attachEvents(){
-			if(DSA && DSA.Events){
-				DSA.Events.register($('#load-btn').get(0), "click",function(){
-					VideoControl.load();
-				},false);
-
-				DSA.Events.register($('#play-btn').get(0), "click", function(){
-					VideoControl.paused ? VideoControl.play() : VideoControl.pause();
-				}, false);
-
-				DSA.Events.register($('#playRate-btn').get(0), 'click', function(){
-					VideoControl.addplaybackRate();
-				}, false);
-
-				DSA.Events.register($('#subplayRate-btn').get(0), 'click',function(){
-					VideoControl.subplaybackRate();
-				}, false);
-
-				/*DSA.Events.register($('#video-elm-fast').get(0), 'loadstart', function(e){
-					e.target.playbackRate = 1;
-					e.target.play();					
-				}, false);
-
-				DSA.Events.register($('#video-elm-fast').get(0), 'timeupdate', function(e){
-
-					draw($('#video-elm-fast').get(0), 50, 50);
-					
-				}, false);*/
-
-			}
-		}
-
-		/*function draw(video, w, h){
-			if(video.paused || video.ended)  return false;
-
-			if(videoTime == video.currentTime) return false;
-
-			var lastBuffered = video.buffered.end(video.buffered.length-1);
-			if(lastBuffered <= video.currentTime) return false;
-
-
-			var canvas = document.createElement('canvas'),
-				context;
-
-			videoTime = video.currentTime;
-			canvas.height = 50;
-			canvas.width = 50;
-			context = canvas.getContext('2d');
-
-			context.drawImage(video, 0, 0, w, h);
-			$('#image-holder').append(canvas);
-			//setTimeout(draw,100,video,w,h);				
-		};*/
-
+		
 	</script>
 </html>
